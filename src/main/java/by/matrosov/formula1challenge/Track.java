@@ -4,22 +4,26 @@ import java.util.*;
 
 public class Track {
 
-    private static final int trackLength = 10000000; //m
+    private static final int trackLength = 10000; //m
     private static final int numberBolids = 6;
 
     public static void main(String[] args) {
         List<Bolid> bolidList = new ArrayList<>();
+        List<Bolid> finishedList = new ArrayList<>();
 
         initBolids(bolidList);
 
         while (true){
+            printInfo(bolidList);
             for (Bolid bolid : bolidList) {
-                bolid.move(bolid.getDistance(), bolid.getSpeed());
+                if (!bolid.isFinished()){
+                    bolid.move(bolid.getDistance(), bolid.getSpeed());
+                }
             }
-            checkFinished(bolidList);
+            checkFinished(bolidList, finishedList);
             checkLastPositions(bolidList);
             checkAround10m(bolidList);
-            printInfo(bolidList);
+            //flf printInfo(bolidList);
 
             //stopped criterion
             int count = 0;
@@ -28,7 +32,8 @@ public class Track {
                     count++;
                 }
             }
-            if (count == 0){
+            if (count == 1){
+                System.out.println(finishedList);
                 return;
             }
         }
@@ -85,10 +90,13 @@ public class Track {
         }
     }
 
-    private static void checkFinished(List<Bolid> bolidList){
+    private static void checkFinished(List<Bolid> bolidList, List<Bolid> finishedList){
         for (Bolid bolid : bolidList) {
             if (bolid.getDistance() >= trackLength){
-                bolid.setFinished(true);
+                if (!bolid.isFinished()){
+                    bolid.setFinished(true);
+                    finishedList.add(bolid);
+                }
             }
         }
     }
@@ -97,6 +105,7 @@ public class Track {
         for (Bolid bolid : bolidList) {
             System.out.println(bolid.toString());
         }
+        System.out.println("-------------------------------------");
     }
 
 }
